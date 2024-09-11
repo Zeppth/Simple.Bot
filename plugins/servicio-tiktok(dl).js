@@ -7,7 +7,7 @@ const command = {
 }
 
 command.script = async (m, { conn }) => {
-    if (!m.args[0]) return m.reply(`Ejemplo :\n.tiktok https://vm.tiktok.com/ZM6SuhCKy/`)
+    if (!m.text) return m.reply(`Ingrese el comando *\`.${m.command}\`* y seguido un enlace de *Tiktok*`)
     m.react('wait')
 
     const TkTk = await conn.getJSON(`https://www.tikwm.com/api/?url=${m.args[0]}?hd=1`)

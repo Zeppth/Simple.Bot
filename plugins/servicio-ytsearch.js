@@ -6,7 +6,7 @@ const command = {
 }
 
 command.script = async (m, { conn }) => {
-    if (!m.text) return m.reply('Que quieres que busque en YouTube?')
+    if (!m.text) return m.reply(`Ingrese el comando *\`.${m.command}\`* y seguido el título de un video de YouTube`)
     m.react('wait')
     try {
         const vid = (await yts(m.text)).all[0]

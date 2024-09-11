@@ -171,7 +171,7 @@ command.script = async (m, { conn }) => {
         if (m.args[0] == 'detect') {
             if (!detect.detect) return await m.reply('El ajuste "detect" no está activo.')
             if (m.tag[0]) {
-                if (!m.chat.grupo) return m.sms('group')
+                if (!m.chat.group) return m.sms('group')
                 if (!m.sender.admin) return m.sms('admin')
                 if (!m.bot.admin) return m.sms('botAdmin')
                 if (!chatdata.settings[m.tag[0]]) return await m.reply('Tag=' + m.tag[0] + ' no encontrado.')
@@ -188,7 +188,7 @@ command.script = async (m, { conn }) => {
         else if (m.args[0] == 'antionce') {
             if (!antiOnce.antiOnce) return await m.reply('El ajuste "antiOnce" no está activo.')
             if (m.tag[0]) {
-                if (!m.chat.grupo) return m.sms('group')
+                if (!m.chat.group) return m.sms('group')
                 if (!m.sender.admin) return m.sms('admin')
                 if (!chatdata.settings[m.tag[0]]) return await m.reply('Tag=' + m.tag[0] + ' no encontrado.')
                 const tagBoolean = m.tag[2] == 'true' ? true : m.tag[2] == 'false' ? false : m.tag[2]
@@ -203,7 +203,7 @@ command.script = async (m, { conn }) => {
         else if (m.args[0] == 'antilink') {
             if (!antiLink.antiLink) return await m.reply('El ajuste "antiOnce" no está activo.')
             if (m.tag[0]) {
-                if (!m.chat.grupo) return m.sms('group')
+                if (!m.chat.group) return m.sms('group')
                 if (!m.sender.admin) return m.sms('admin')
                 if (!m.bot.admin) return m.sms('botAdmin')
                 if (!chatdata.settings[m.tag[0]]) return await m.reply('Tag=' + m.tag[0] + ' no encontrado.')
@@ -233,7 +233,7 @@ command.script = async (m, { conn }) => {
         if (m.tag[0]) {
             if (!Update[m.tag[1]]) return await m.reply('Tag=[' + m.tag[1] + '] no encontrado.')
             const m74 = m.tag[2] == 'true' ? true : m.tag[2] == 'false' ? false : m.tag[2]
-            if (!m.chat.grupo) return m.sms('group')
+            if (!m.chat.group) return m.sms('group')
             if (!m.sender.admin) return m.sms('admin')
             if (m.tag[1] == 'antiLink') {
                 if (!m.bot.admin) return m.sms('botAdmin')

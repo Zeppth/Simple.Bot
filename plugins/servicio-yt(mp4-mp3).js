@@ -8,7 +8,7 @@ const command = {
 }
 
 command.script = async (m, { conn }) => {
-    if (!m.args[0]) return m.reply('*Ingrese el comando junto al link de YouTube*')
+    if (!m.text) return m.reply(`Ingrese el comando *\`.${m.command}\`* y seguido el enlace de un video de YouTube`)
     if (!Regex.test(m.args[0])) return m.reply(`Link incorrecto`)
 
     if (m.command == 'ytmp') {

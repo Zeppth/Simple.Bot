@@ -1,7 +1,7 @@
 import yts from 'yt-search'
 
 const command = {
-  command: ['play'],
+  command: ['play', 'youtube'],
   categoria: ['servicio']
 }
 
@@ -26,7 +26,7 @@ command.script = async (m, { conn }) => {
         { name: 'reply', button: ['( 🎧 • audio )', `.ytmp3 ${url}`] },
       ]
 
-      if (!m.chat.grupo) {
+      if (!m.chat.group) {
         const single_select = [{ title: '', highlight_label: '', rows: [] }]
         for (let i = 1; i <= 8; i++) { if (videos.length >= i) single_select[0].rows.push({ header: videos[i].title, title: 'Duracion ' + videos[i].timestamp + ' / Subido ' + videos[i].ago, description: readMore + (videos[i].description === '' ? 'Sin descripción' : videos[i].description), id: '.ytmp ' + videos[i].url }) }
         Buttons.push({ name: 'single_select', button: ['Otros', single_select] })
@@ -38,7 +38,7 @@ command.script = async (m, { conn }) => {
       m.react('error')
       console.log(e)
     }
-  } else m.reply(`*Ingresa el título de una canción*`)
+  } else m.reply(`Ingrese el comando *\`.${m.command}\`* y seguido el título de un video de *YouTube*`)
 }
 
 export default command

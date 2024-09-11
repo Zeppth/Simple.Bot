@@ -7,7 +7,7 @@ const command = {
 }
 
 command.script = async (m, { conn }) => {
-    if (!m.chat.grupo) return m.sms('group')
+    if (!m.chat.group) return m.sms('group')
     if (!m.sender.admin) return m.sms('admin')
     let text = ''
     for (let mem of m.chat.participants) { text += `- @${mem.id.split('@')[0]}\n` }
