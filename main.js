@@ -186,7 +186,7 @@ async function StartBot() {
 
                 m.body = await getMessageBody(m.message)
                 m.tag = m.body ? (m.body.match(/tag=[^ ]+/g) || []).map(tag => tag.split('=')[1]) : []
-                m.budy = m.tag.length > 0 ? m.body.replace(/tag=[^\s]+/g, '') : m.body?.trim() || ''
+                m.budy = m.tag.length > 0 ? m.body.replace(/tag=[^\s]+/g, '') : m.body || ''
                 m.command = (file.Prefix + '').includes(m.budy[0]) ? m.budy.substring(1).trim().split(/ +/)[0].toLowerCase() : (file.Prefix === false && !(file.Prefix + '').includes(m.budy[0])) ? m.budy.trim().split(/ +/)[0].toLowerCase() : false
                 m.isCmd = await conn.commands.get('0').script(m.command)
                 m.args = m.budy.trim().split(/ +/).slice(1)
