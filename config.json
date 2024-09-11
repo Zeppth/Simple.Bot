@@ -1,0 +1,22 @@
+{
+    "pathFile": "SimBot.byls",
+    "Prefix": ".¿?¡!#%&/,~@",
+    "botName": [
+        "SimpleBot",
+        "Simple.Bot",
+        "SimpleBase.Bot"
+    ],
+    "react": {
+        "wait": "⌛",
+        "done": "✔️",
+        "error": "✖️"
+    },
+    "ROwner": "573243977474",
+    "Owners": [
+        "573243977474",
+        "5216671993513",
+        "51907182818",
+        "573113825327",
+        "5215636929950"
+    ]
+}
