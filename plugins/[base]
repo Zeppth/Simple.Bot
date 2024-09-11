@@ -1,0 +1,110 @@
+const setcomando = (`*Comando:* *\`set\`*
+
+    ┌ *profile:*
+    ├ • photo:
+    │├ • group: cambiar foto de perfil del grupo
+    │└ • bot: cambiar foto de perfil del bot
+    ├ • description:
+    │├ • group: cambiar descripción del grupo
+    │└ • bot: cambiar estado del bot
+    └ • name:
+    ⠀├ • group: cambiar nombre del grupo
+    ⠀└ • bot: cambiar nombre del bot
+    
+    Ejemplo: */set profile photo group*`);
+
+const command = {
+    command: ['add', 'get', 'give', 'remove'],
+    categoria: ['propietario']
+}
+
+command.script = async (m, { conn }) => {
+    if (m.command == 'get') {
+        if (m.tag[0] == 'profile') {
+            if (m.tag[1] == 'photo') {
+            }
+        }
+    }
+
+
+
+
+
+
+    if (!m.args[0]) return await m.reply(setcomando)
+    switch (m.args[0].toLowerCase()) {
+        case 'profile': {
+            if (m.args[1] == 'description' || m.args[1] == 'descripcion') {
+                if (m.args[2] == 'group' || m.args[2] == 'grupo') {
+                    if (!m.isGroup) return m.sms('group');
+                    if (!m.isAdmin) return m.sms('admin');
+                    const text = m.args[1] ? (m.args.slice(3).join(" ")) : null;
+                    await m.react('wait')
+                    try {
+                        await conn.groupUpdateDescription(m.chat, text);
+                        await m.react('done')
+                    } catch { m.react('error') }
+                }
+                else if (m.args[2] == 'bot' || m.args[2] == 'Bot') {
+                    if (!m.IS(['isROwner', 'isOwner', 'isModr'])) return m.sms('modr');
+                    const text = m.args.slice(3).join(" ");
+                    await m.react('wait')
+                    try {
+                        await conn.updateProfileStatus(text);
+                        await m.react('done')
+                    } catch { await m.react('error') }
+                } else {
+                    await m.reply(`*Comando:* *\`set profile ${m.args[1]}\`*
+                    
+    ┌ *group:* (cambiar descripción del grupo)
+    └ *bot:* (cambiar estado del bot)
+    
+    Ejemplo: */set profile ${m.args[1]} grupo \`@texto\`*`)
+                }
+            }
+            else if (m.args[1] == 'name') {
+                if (m.args[2] == 'grupo') {
+                    if (!m.isGroup) return m.sms('group');
+                    if (!m.isAdmin) return m.sms('admin');
+                    const text = m.args.slice(3).join(" ");
+                    await m.react(wait)
+                    try {
+                        await conn.groupUpdateSubject(m.chat, text);
+                        await m.react(done)
+                    } catch { m.react('error') }
+                }
+                else if (m.args[2] == 'bot' || m.args[2] == 'Bot') {
+                    if (!m.IS(['isROwner', 'isOwner', 'isModr'])) return m.sms('modr');
+                    const text = m.args.slice(3).join(" ");
+                    await m.react(wait)
+                    try {
+                        await conn.updateProfileName(text);
+                        await m.react(done)
+                    } catch { await m.react('error') }
+                } else {
+                    await m.reply(`*Comando:* *\`set profile ${m.args[1]}\`*
+                                            
+    ┌ *group:* (cambiar nombre del grupo)
+    └ *bot:* (cambiar nombre del bot)
+    
+    Ejemplo: */set profile name grupo \`@texto=name\`*`)
+                }
+            } else {
+                await m.reply(`*Comando:* *\`set profile\`*
+                    
+    ┌ *description:*
+    ├ • *group:* (cambiar descripción del grupo)
+    └ • *bot:* (cambiar estado del bot)
+                    
+    ┌ *name:*
+    ├ • *group:* (cambiar nombre del grupo)
+    └ • *bot:* (cambiar nombre del bot)
+    
+    Ejemplo: */set profile photo grupo \`@quoted=image\`*`)
+            }
+        } break
+        default: { await m.reply(setcomando) } break
+    }
+}
+
+export default command
