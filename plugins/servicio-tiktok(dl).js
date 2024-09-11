@@ -10,14 +10,13 @@ command.script = async (m, { conn }) => {
     if (!m.text) return m.reply(`Ingrese el comando *\`.${m.command}\`* y seguido un enlace de *Tiktok*`)
     m.react('wait')
 
-    const TkTk = await conn.getJSON(`https://www.tikwm.com/api/?url=${m.args[0]}?hd=1`)
-    const TikTok = TkTk.data
+    try {
+        const TkTk = await conn.getJSON(`https://www.tikwm.com/api/?url=${m.args[0]}?hd=1`)
+        const TikTok = TkTk.data
 
-    if (m.tag[0] == 'audio') {
-        if (TikTok.music) try { await conn.sendMessage(m.chat.id, { audio: { url: TikTok.music }, mimetype: 'audio/mpeg' }, { quoted: m }), m.react('done') } catch (e) { m.react('error'), console.error(e) }
-        else return m.reply('Este video/imagen no tiene ningun audio.')
-    } else {
-        try {
+        if (m.tag[0] == 'audio') {
+            if (TikTok.music) { await conn.sendMessage(m.chat.id, { audio: { url: TikTok.music }, mimetype: 'audio/mpeg' }, { quoted: m }), m.react('done') } else return m.reply('Este video/imagen no tiene ningun audio.')
+        } else {
             if (TikTok.images) {
                 const url = TikTok.images;
                 var Texto = `*Titulo:* ${TikTok.title}\n`;
@@ -45,8 +44,8 @@ command.script = async (m, { conn }) => {
                 await conn.sendButton(m.chat.id, [null, readMore + Texto, 'Bot'], ['video-url', TikTok.play], [{ name: 'reply', button: ['Send Audio ?', '.tiktok ' + m.args[0] + ' tag=audio'] }], m)
                 m.react('done')
             }
-        } catch (e) { console.log(e); m.react('error') }
-    }
+        }
+    } catch (e) { console.log(e); m.react('error') }
 }
 
 
