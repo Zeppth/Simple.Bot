@@ -42,7 +42,6 @@ function startBot(file) {
     });
 }
 
-// Inicia el bot
 startBot('main.js');
 
 const app = express();
@@ -51,8 +50,8 @@ const port = 8000
 app.get('/', (req, res) => {
     res.send(`
         <html>
-        <head><title>Bot Activo</title></head>
-        <body><h1>El bot está activo</h1></body>
+        <head><title>Simple.Bot</title></head>
+        <body><h1>🐦</h1></body>
         </html>
     `);
 });
