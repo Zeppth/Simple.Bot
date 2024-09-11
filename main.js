@@ -155,13 +155,13 @@ async function StartBot() {
                     m.chat = { ...(await conn.getChat(m.key.remoteJid)) }
                 } else if (m.key.remoteJid.endsWith('@s.whatsapp.net')) {
                     m.chat = { ...(await conn.getUser(m.key.remoteJid)) }
-                    m.chat.grupo = false
+                    m.chat.group = false
                 }
                 m.sender = { ...(m.key.remoteJid.endsWith('@s.whatsapp.net') ? await conn.getUser(m.key.remoteJid) : await conn.getUser(m.key.participant)) }
                 m.bot = { ...(await conn.getUser(conn.user.id.split(":")[0] + "@s.whatsapp.net")) }
                 m.sender.mentioned = m.mentionedJid || []
 
-                if (m.chat.grupo) {
+                if (m.chat.group) {
                     m.bot.fromMe = m.key.fromMe || false
                     m.bot.admin = m.chat.admins.includes(m.bot.id) || false
                     m.sender.admin = m.chat.admins.includes(m.sender.id) || false
@@ -186,13 +186,13 @@ async function StartBot() {
 
                 m.body = await getMessageBody(m.message)
                 m.tag = m.body ? (m.body.match(/tag=[^ ]+/g) || []).map(tag => tag.split('=')[1]) : []
-                m.budy = m.tag.length > 0 ? m.body.replace(/tag=[^\s]+/g, '') : m.body || ''
+                m.budy = m.tag.length > 0 ? m.body.replace(/tag=[^\s]+/g, '') : m.body.trim() || ''
                 m.command = (file.Prefix + '').includes(m.budy[0]) ? m.budy.substring(1).trim().split(/ +/)[0].toLowerCase() : (file.Prefix === false && !(file.Prefix + '').includes(m.budy[0])) ? m.budy.trim().split(/ +/)[0].toLowerCase() : false
                 m.isCmd = await conn.commands.get('0').script(m.command)
-                m.args = m.isCmd ? m.budy.trim().split(/ +/).slice(1) : m.budy.trim().split(/ +/)
-                m.text = m.args.length > 0 ? m.args.join(" ") : m.budy == '' ? false : m.budy
+                m.args = m.budy.trim().split(/ +/).slice(1)
+                m.text = m.args.length > 0 ? m.args.join(" ") : false
 
-                console.log('\x1b[1;31m~\x1b[1;37m>', chalk.white('['), chalk.magenta(moment().tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('HH:mm:ss')).trim(), chalk.white(']'), chalk.blue(await conn.commands.get('0').script(m.command) ? `COMANDO:` : `MENSAJE:`), chalk.green('{'), chalk.rgb(255, 131, 0).underline(m.budy == '' ? m.type(m.message) + '' : m.budy), chalk.green('}'), chalk.blue(m.isCmd ? 'Por' : 'De'), chalk.cyan(m.sender.name), 'Chat', m.chat.grupo ? chalk.bgGreen('grupo:' + (m.chat.name || m.chat.id)) : chalk.bgRed('Privado:' + m.sender.name || m.sender.id))
+                console.log('\x1b[1;31m~\x1b[1;37m>', chalk.white('['), chalk.magenta(moment().tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('HH:mm:ss')).trim(), chalk.white(']'), chalk.blue(await conn.commands.get('0').script(m.command) ? `COMANDO:` : `MENSAJE:`), chalk.green('{'), chalk.rgb(255, 131, 0).underline(m.budy == '' ? m.type(m.message) + '' : m.budy), chalk.green('}'), chalk.blue(m.isCmd ? 'Por' : 'De'), chalk.cyan(m.sender.name), 'Chat', m.chat.group ? chalk.bgGreen('grupo:' + (m.chat.name || m.chat.id)) : chalk.bgRed('Privado:' + m.sender.name || m.sender.id))
 
                 const message = m.message[m.type(m.message)]
                 m.contextInfo = m.type(message, 'contextInfo') ? message.contextInfo : false

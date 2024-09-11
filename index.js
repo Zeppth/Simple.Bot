@@ -42,6 +42,7 @@ function startBot(file) {
     });
 }
 
+// Inicia el bot
 startBot('main.js');
 
 const app = express();

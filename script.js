@@ -71,6 +71,7 @@ export async function ChatUpdate(conn, m, store) {
         }
         else if (m.type(m.quoted, "interactiveMessage") &&
             m.quoted.interactiveMessage.header?.title === '@GPT') {
+            m.text = m.budy
             await conn.commands.get('servicio-IA.js').script(m, { conn });
         }
     } catch (e) {
