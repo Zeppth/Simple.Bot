@@ -84,7 +84,7 @@ async function StartBot() {
         if (!chatStore[m.id]) chatStore[m.id] = { link: false, code: false, users: {} }
 
         // datos | obtener datos
-        m.grupo = m.id.endsWith('@g.us')
+        m.group = m.id.endsWith('@g.us')
         m.metaData = m.grupo ? (await conn.groupMetadata(chat) || {}) : {}
         m.name = m.metaData.subject || 'undefined'
         m.description = m.metaData.desc || 'undefined'
