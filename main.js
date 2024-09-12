@@ -85,7 +85,7 @@ async function StartBot() {
 
         // datos | obtener datos
         m.group = m.id.endsWith('@g.us')
-        m.metaData = m.grupo ? (await conn.groupMetadata(chat) || {}) : {}
+        m.metaData = m.group ? (await conn.groupMetadata(m.id) || {}) : {}
         m.name = m.metaData.subject || 'undefined'
         m.description = m.metaData.desc || 'undefined'
         m.participants = m.metaData.participants || []
