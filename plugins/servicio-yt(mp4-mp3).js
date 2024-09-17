@@ -11,48 +11,69 @@ command.script = async (m, { conn }) => {
     if (!m.text) return m.reply(`Ingrese el comando *\`.${m.command}\`* y seguido el enlace de un video de YouTube`)
     if (!Regex.test(m.args[0])) return m.reply(`Link incorrecto`)
 
-    if (m.command == 'ytmp') {
-        await m.react('wait')
-        try {
-            const data = await youtubedl(m.args[0])
-            await conn.sendButton(m.chat.id, [data.title, null, global.botName1], ['image-url', data.thumbnail], [
-                { name: 'reply', button: ['( 🎥 • video )', `.ytmp4 ${m.args[0]}`] },
-                { name: 'reply', button: ['( 🎧 • audio )', `.ytmp3 ${m.args[0]}`] },
-            ], m)
-            await m.react('done')
-        } catch (e) { console.log(e); await m.react('error') }
-    }
-    else if (m.command == 'ytmp3') {
-        const urls = YoutTube(m.text)
-        for (let i = 0; i < urls.length; i++) {
+    try {
+        if (m.command == 'ytmp') {
+            await m.react('wait')
             try {
-                await m.react('wait')
-                const data = await youtubedl(urls[i])
-                await conn.sendMessage(m.chat.id, { audio: { url: await data.audio['128kbps'].download() }, contextInfo: { externalAdReply: { title: data.title, body: '', previewType: "PHOTO", thumbnailUrl: data.thumbnail } }, mimetype: "audio/mp4", fileName: `${data.title}.mp3` }, { quoted: m })
-                await m.react('done');
-            } catch (e) { console.log(e); await m.react('error') }
-        }
-    }
-    else if (m.command == 'ytmp4') {
-        const urls = YoutTube(m.text)
-        for (let i = 0; i < urls.length; i++) {
-            try {
-                await m.react('wait')
-                const data = await youtubedl(urls[i])
-                const video = data.video[m.tag[0] ? m.tag[0] : '480p']
-                await conn.sendMessage(m.chat.id, { document: { url: await video.download() }, caption: `*Calidad:* ${video.quality}`.trim(), mimetype: 'video/mp4', fileName: data.title + `.mp4` }, { quoted: m })
+                const data = await youtubedl(m.args[0])
+                await conn.sendButton(m.chat.id, [data.title, null, global.botName1], ['image-url', data.thumbnail], [
+                    { name: 'reply', button: ['( 🎥 • video )', `.ytmp4 ${m.args[0]}`] },
+                    { name: 'reply', button: ['( 🎧 • audio )', `.ytmp3 ${m.args[0]}`] },
+                ], m)
                 await m.react('done')
-            } catch {
-                try {
-                    await m.react('wait')
-                    const data = await youtubedl(urls[i])
-                    const video = data.video['auto']
-                    await conn.sendMessage(m.chat.id, { document: { url: await video.download() }, caption: `*Calidad:* ${video.quality}`.trim(), mimetype: 'video/mp4', fileName: data.title + `.mp4` }, { quoted: m })
-                    await m.react('done')
-                } catch { await m.react('error') }
+            } catch (e) {
+                const ytmp = await conn.getJSON(`https://widipe.com/download/ytdl?url=${m.args[0]}`)
+                if (ytmp.result) {
+                    await conn.sendButton(m.chat.id, [ytmp.result.title, null, global.botName1], ['image-url', ytmp.result.thumbnail], [
+                        { name: 'reply', button: ['( 🎥 • video )', `.ytmp4 ${m.args[0]}`] },
+                        { name: 'reply', button: ['( 🎧 • audio )', `.ytmp3 ${m.args[0]}`] },
+                    ], m); m.react('done')
+                } else new Error('No result')
             }
         }
-    }
+        else if (m.command == 'ytmp3') {
+            const urls = YoutTube(m.text)
+            for (let i = 0; i < urls.length; i++) {
+                await m.react('wait')
+                try {
+                    const data = await youtubedl(urls[i])
+                    await conn.sendMessage(m.chat.id, { audio: { url: await data.audio['128kbps'].download() }, contextInfo: { externalAdReply: { title: data.title, body: '', previewType: "PHOTO", thumbnailUrl: data.thumbnail } }, mimetype: "audio/mp4", fileName: `${data.title}.mp3` }, { quoted: m })
+                    await m.react('done');
+                } catch (e) {
+                    const ytmp = await conn.getJSON(`https://widipe.com/download/ytdl?url=${m.args[0]}`)
+                    if (ytmp.result) {
+                        await conn.sendMessage(m.chat.id, { audio: { url: ytmp.result.mp3 }, contextInfo: { externalAdReply: { title: ytmp.result.title, body: '', previewType: "PHOTO", thumbnailUrl: ytmp.result.thumbnail } }, mimetype: "audio/mp4", fileName: `${ytmp.result.title}.mp3` }, { quoted: m })
+                        await m.react('done');
+                    } else new Error('No result')
+                }
+            }
+        }
+        else if (m.command == 'ytmp4') {
+            const urls = YoutTube(m.text)
+            for (let i = 0; i < urls.length; i++) {
+                await m.react('wait')
+                try {
+                    const data = await youtubedl(urls[i])
+                    const video = data.video[m.tag[0] ? m.tag[0] : '480p']
+                    await conn.sendMessage(m.chat.id, { document: { url: await video.download() }, caption: `*Calidad:* ${video.quality}`.trim(), mimetype: 'video/mp4', fileName: data.title + `.mp4` }, { quoted: m })
+                    await m.react('done')
+                } catch {
+                    try {
+                        const data = await youtubedl(urls[i])
+                        const video = data.video['auto']
+                        await conn.sendMessage(m.chat.id, { document: { url: await video.download() }, caption: `*Calidad:* ${video.quality}`.trim(), mimetype: 'video/mp4', fileName: data.title + `.mp4` }, { quoted: m })
+                        await m.react('done')
+                    } catch {
+                        const ytmp = await conn.getJSON(`https://widipe.com/download/ytdl?url=${m.args[0]}`)
+                        if (ytmp.result) {
+                            await conn.sendMessage(m.chat.id, { document: { url: ytmp.result.mp4 }, caption: ``, mimetype: 'video/mp4', fileName: ytmp.result.title + `.mp4` }, { quoted: m })
+                            await m.react('done');
+                        } else new Error('No result')
+                    }
+                }
+            }
+        }
+    } catch (e) { m.react('error'), console.error(e) }
 }
 
 export default command

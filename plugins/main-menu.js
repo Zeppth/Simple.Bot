@@ -1,3 +1,6 @@
+const { generateWAMessageFromContent, prepareWAMessageMedia, proto } = (await import('@whiskeysockets/baileys')).default
+
+
 const command = {
     command: ['menu', 'comandos', 'cmd'],
     categoria: ['main']
@@ -6,20 +9,20 @@ const command = {
 command.script = async (m, { conn }) => {
     m.reply(`*Comandos*
 
-- *Grupos:*
+*Grupos:*
  .settings
  .hidetag
  .invocar
  .ban
 
-- *Media:*
+*Media:*
  .play
  .yts
  .ytmp4
  .ytmp3
  .tiktok
 
-- *Otros*
+*Otros*
  .animes
  .IA`)
 }
