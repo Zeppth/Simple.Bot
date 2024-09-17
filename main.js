@@ -97,7 +97,7 @@ async function StartBot() {
         m.change = {
             description: async (text) => await conn.groupUpdateDescription(m.id, text),
             name: async (text) => await conn.groupUpdateSubject(m.id, text),
-            photo: async (image) => await conn.query({ tag: 'iq', attrs: { to: m.id, type: 'set', xmlns: 'w:profile:picture' }, content: [{ tag: 'picture', attrs: { type: 'image' }, content: conn.generate_ProfilePhoto(image) }] })
+            photo: async (image, type = 'normal') => type == 'normal' ? await conn.updateProfilePicture(m.id, image) : await conn.query({ tag: 'iq', attrs: { to: m.id, type: 'set', xmlns: 'w:profile:picture' }, content: [{ tag: 'picture', attrs: { type: 'image' }, content: conn.generate_ProfilePhoto(image) }] })
         }
 
         return m
@@ -127,7 +127,7 @@ async function StartBot() {
         if (m.bot) m.change = {
             description: async (text) => await conn.updateProfileStatus(text),
             name: async (text) => await conn.updateProfileName(text),
-            photo: async (image) => await conn.query({ tag: 'iq', attrs: { to: m.id, type: 'set', xmlns: 'w:profile:picture' }, content: [{ tag: 'picture', attrs: { type: 'image' }, content: conn.generate_ProfilePhoto(image) }] })
+            photo: async (image, type = 'normal') => type == 'normal' ? await conn.updateProfilePicture(m.id, image) : await conn.query({ tag: 'iq', attrs: { to: m.id, type: 'set', xmlns: 'w:profile:picture' }, content: [{ tag: 'picture', attrs: { type: 'image' }, content: conn.generate_ProfilePhoto(image) }] })
         }
 
         return m
@@ -141,14 +141,12 @@ async function StartBot() {
     });
 
     conn.ev.on('messages.upsert', async (m) => {
-        let message_org = m
+        let message_org = JSON.stringify(m, null, 2)
         try {
             if (m.messages > !0) return 'Esperando...'
             m = m.messages[0]
             m.message_org = message_org
-            m.type = (message = { E: null }, object = false) => object ? Object.keys(message).find(o => o == object) : Object.keys(message)[0]
-
-            console.log(JSON.stringify(m, (key, value) => key === 'message_org' ? undefined : value, 2))
+            m.type = (message = { _: null }, object = false) => object ? Object.keys(message).find(o => o == object) : Object.keys(message)[0]
 
             if (m.key) {
                 if (m.key.remoteJid.endsWith('@g.us')) {
@@ -159,7 +157,6 @@ async function StartBot() {
                 }
                 m.sender = { ...(m.key.remoteJid.endsWith('@s.whatsapp.net') ? await conn.getUser(m.key.remoteJid) : await conn.getUser(m.key.participant)) }
                 m.bot = { ...(await conn.getUser(conn.user.id.split(":")[0] + "@s.whatsapp.net")) }
-                m.sender.mentioned = m.mentionedJid || []
 
                 if (m.chat.group) {
                     m.bot.fromMe = m.key.fromMe || false
@@ -194,25 +191,16 @@ async function StartBot() {
 
                 console.log('\x1b[1;31m~\x1b[1;37m>', chalk.white('['), chalk.magenta(moment().tz(Intl.DateTimeFormat().resolvedOptions().timeZone).format('HH:mm:ss')).trim(), chalk.white(']'), chalk.blue(await conn.commands.get('0').script(m.command) ? `COMANDO:` : `MENSAJE:`), chalk.green('{'), chalk.rgb(255, 131, 0).underline(m.budy == '' ? m.type(m.message) + '' : m.budy), chalk.green('}'), chalk.blue(m.isCmd ? 'Por' : 'De'), chalk.cyan(m.sender.name), 'Chat', m.chat.group ? chalk.bgGreen('grupo:' + (m.chat.name || m.chat.id)) : chalk.bgRed('Privado:' + m.sender.name || m.sender.id))
 
-                const message = m.message[m.type(m.message)]
-                m.contextInfo = m.type(message, 'contextInfo') ? message.contextInfo : false
-                m.quoted = m.type(message, 'contextInfo') ? m.type(message.contextInfo, 'quotedMessage') ? message.contextInfo.quotedMessage : false : false
+                const message = m.message[m.type(m.message)];
+                m.contextInfo = message.contextInfo || false;
+                m.quoted = false;
 
-                if (m.quoted) {
-                    m.quoted.sender = { ...(await conn.getUser(m.contextInfo.participant.split(":")[0] || m.contextInfo.participant) || {}) }
-                    m.quoted.sender.mentioned = m.contextInfo.mentionedJid || []
-                    /*const quotedChat = m.contextInfo.remoteJid || m.chat
-
-                    if (quotedChat.endsWith('@s.whatsapp.net')) {
-                        m.quoted.chat = { ...(await conn.getUser(quotedChat)) }
-                        m.quoted.chat.grupo = false
-                    } else if (quotedChat.endsWith('@g.us')) {
-                        m.quoted.chat = { ...(await conn.getChat(quotedChat)) }
+                if (m.contextInfo) {
+                    m.sender.mentioned = m.contextInfo.mentionedJid || [];
+                    if (m.contextInfo.quotedMessage) {
+                        m.quoted = { ...m.contextInfo.quotedMessage };
+                        m.quoted.sender = await conn.getUser(m.contextInfo.participant) || {};
                     }
-
-                    if (m.quoted.chat.grupo) {
-                        m.quoted.sender.admin = m.quoted.chat.admins.includes(m.quoted.sender.id) || false
-                    }*/
                 }
 
                 //cache
